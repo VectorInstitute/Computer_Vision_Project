@@ -1,3 +1,7 @@
+"""
+Contains pieces taken from https://github.com/pytorch/examples/issues/70
+and https://github.com/pytorch/examples/tree/master/vae
+"""
 import torch
 import torch.nn as nn
 from torch.utils.data import DataLoader
@@ -14,8 +18,6 @@ MVTEC_ROOT_DIR = "/scratch/ssd002/datasets/MVTec_AD"
 
 
 def loss_fn(x, recon_batch, mu, logvar):
-    """Modified from  https://github.com/pytorch/examples/tree/master/vae
-    """
     B = x.size(0)
     MSE = (x - recon_batch).pow(2).sum() / B
     KLD = (-0.5 * (1 + logvar - mu.pow(2) - logvar.exp()).sum(1)).mean()
@@ -23,9 +25,6 @@ def loss_fn(x, recon_batch, mu, logvar):
 
 
 class Decoder(nn.Module):
-    """
-    modified from https://github.com/pytorch/examples/issues/70
-    """
 
     def __init__(self):
         nc = 3
@@ -65,9 +64,6 @@ class Decoder(nn.Module):
 
 
 class Encoder(nn.Module):
-    """
-    modified from https://github.com/pytorch/examples/issues/70
-    """
 
     def __init__(self):
         nc = 3
@@ -138,7 +134,7 @@ def to_loader(dset, batch_size=128, num_workers=4):
 def train():
     device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
-    training_transforms = VT.Compose_MVTec_transform(
+    training_transforms = VT.ComposeMVTecTransform(
         [A.Resize(128, 128),
          A.ToFloat(max_value=255),
          ToTensorV2()])
