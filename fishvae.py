@@ -230,8 +230,8 @@ def train(lmda = None):
         mean_loss = sum(train_losses) / len(train_losses) if (
             len(train_losses) > 0) else 0
         print(f"train loss at epoch {epoch+1} is {mean_loss}")
-        if (epoch % 20) == 0
-                or epoch in extra_checkpoints:
+        if ((epoch % 20) == 0
+                or epoch in extra_checkpoints):
             torch.save(model.state_dict(), f"{checkpointDir}/{checkpointStr}_epo{epoch}.pt")
 
 
