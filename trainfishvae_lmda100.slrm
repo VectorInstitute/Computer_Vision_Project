@@ -12,12 +12,12 @@
 
 # Change this for request different number of CPUs/GPU/Memory, they must fit on a single node
 #SBATCH --cpus-per-task=2
-#SBATCH --gres=gpu:4
+#SBATCH --gres=gpu:2
 #SBATCH --mem=8G
 
 # stdout/err are directed to file, these two arguments speficify where they should go, %j is a formatter for the job id
-#SBATCH --output=./TT_convvae_%j.out
-#SBATCH --error=./TT_convvae_%j.err
+#SBATCH --output=./TT_f100_%j.out
+#SBATCH --error=./TT_f100_%j.err
 
 # Set the file mode to append, otherwise preemption resets the file and the previous output will be overwritten
 #SBATCH --open-mode=append
@@ -40,4 +40,4 @@ module load vector_cv_project
 
 #echo "This goes to stderr" 1>&2
 
-python convvae.py 1
+python fishvae.py 1
