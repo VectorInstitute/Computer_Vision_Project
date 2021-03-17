@@ -13,6 +13,8 @@ from torchvision.utils import save_image
 from vector_cv_tools import utils as vutils
 from vector_cv_tools import transforms as VT
 from vector_cv_tools import datasets as vdatasets
+import sys
+import os
 
 MVTEC_ROOT_DIR = "/scratch/ssd002/datasets/MVTec_AD"
 
@@ -23,6 +25,11 @@ def loss_fn(x, z,
             mu, logvar):
 
     B = x.size(0)
+  #  print(f"x size: {x.size()}\n",
+  #          f"z size: {z.size()}\n",
+  #          f"xr size: {x_recon_batch.size()}\n",
+  #          f"zr size: {z_recon_batch.size()}\n"
+  #          )
 
     MSEx = (x - x_recon_batch).pow(2).sum() / B
     MSEz = (z - z_recon_batch).pow(2).sum() / B
@@ -115,7 +122,7 @@ class ConvVAE(nn.Module):
         super().__init__()
         self.encoder = Encoder()
         self.decoder = Decoder()
-	self.set_lambda(lmda)
+        self.set_lambda(lmda)
 
     def set_lambda(self,lmda):
         self.z_lambda = lmda
@@ -131,11 +138,15 @@ class ConvVAE(nn.Module):
         mu, logvar = enc_out[..., :100], enc_out[..., 100:]
         z = self.reparameterize(mu, logvar)
         x_recon_batch = self.decoder(z.unsqueeze(-1).unsqueeze(-1))
-	z_recon_batch = self.encoder(x_recon_batch)
+        z_recon_batch = self.encoder(x_recon_batch)
+        # actually we just care about mu
+        # TODO: do we just?
+        z_recon_batch = z_recon_batch[..., :100]
         return z, x_recon_batch, z_recon_batch, mu, logvar
 
 
-def to_loader(dset, batch_size=128, num_workers=4):
+#def to_loader(dset, batch_size=128, num_workers=4):
+def to_loader(dset, batch_size=32, num_workers=4):
     # note that this collate fn is needed for all our image datasets
     # as the PyTorch default WILL load the data in the wrong ordering
     return DataLoader(dset,
@@ -146,11 +157,12 @@ def to_loader(dset, batch_size=128, num_workers=4):
                       shuffle=True)
 
 
-def train():
+def train(lmda = None):
 
     lr = 3e-5 # parameter for Adam optimizer
 
-    lmda = 0.5 # fishAE parameter
+    if not lmda:
+        lmda = 0.5 # fishAE parameter
 
     device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
@@ -166,32 +178,68 @@ def train():
     model = ConvVAE(lmda=lmda).to(device)
     model = torch.nn.DataParallel(model)
 
+    # Checkpointage
+
+    checkpointStr = f"fishvae_v1_lmda{lmda}"
+
+    checkpointDir = "/checkpoint/ttrim/fishae"
+    checkpointFilenames = os.listdir(checkpointDir)
+    releventFilenames = tuple(filename for filename 
+            in checkpointFilenames if filename.startswith(checkpointStr))
+
+    if releventFilenames:
+        lastCheckpointFilename = max(releventFilenames)
+        print(f"Restarting training from checkpoint {lastCheckpointFilename}")
+
+        model.load_state_dict(torch.load(f"{checkpointDir}/{lastCheckpointFilename}"))
+        # epoch is not 0!!!
+        lastepo = int(lastCheckpointFilename.split("epo")[-1].strip(".pt"))
+        print(f"last epoch: {lastepo}")
+    else:
+        print(f"Beginning training for {checkpointStr}")
+        lastepo = 0
+
 
     optimizer = Adam(model.parameters(), lr=lr)
     num_epochs = 500
 
-    for epoch in tqdm(range(num_epochs)):
+    extra_checkpoints = (1,2,3,5,8,13)
+
+    for epoch in tqdm(range(lastepo+1,num_epochs)):
+        print(f"starting epoch {epoch}")
         train_losses = []
         for i, (data, _) in enumerate(train_loader):
             x = data.to(device)
             optimizer.zero_grad()
             z, x_recon_batch, z_recon_batch, mu, logvar = model(x)
             loss = loss_fn(x, z,
-                           self.x_lambda, self.z_lambda,
+                           model.module.x_lambda, model.module.z_lambda,
                            x_recon_batch, z_recon_batch,
                            mu, logvar)
             loss.backward()
             optimizer.step()
             train_losses.append(loss.item())
-            if i % 100 == 0:
-                save_image(recon.detach().cpu(), f"{epoch+1}_{i}.png")
-                print(loss.item())
+
+            # these aren't even good.
+            # maybe if they were more at start of training
+            # and less later on. but as it stands, I'll just look at the checkpoints.
+          #  if i % 100 == 0:
+          #      save_image(recon.detach().cpu(), f"{epoch+1}_{i}.png")
+          #      print(loss.item())
+
         mean_loss = sum(train_losses) / len(train_losses) if (
             len(train_losses) > 0) else 0
         print(f"train loss at epoch {epoch+1} is {mean_loss}")
-        if (epoch % 20) == 0:
-            torch.save(model.state_dict(), f"model_{epoch}.pt")
+        if (epoch % 20) == 0
+                or epoch in extra_checkpoints:
+            torch.save(model.state_dict(), f"{checkpointDir}/{checkpointStr}_epo{epoch}.pt")
 
 
 if __name__ == "__main__":
-    train()
+
+    if len(sys.argv==2):
+        lmda = sys.argv[1]
+    else:
+        lmda = 0.5
+
+    train(lmda)
