@@ -145,8 +145,7 @@ class FishVAE(nn.Module):
         return z, x_recon_batch, z_recon_batch, mu, logvar
 
 
-#def to_loader(dset, batch_size=128, num_workers=4):
-def to_loader(dset, batch_size=32, num_workers=4):
+def to_loader(dset, batch_size=128, num_workers=4):
     # note that this collate fn is needed for all our image datasets
     # as the PyTorch default WILL load the data in the wrong ordering
     return DataLoader(dset,
@@ -161,7 +160,7 @@ def train(lmda = None):
 
     lr = 3e-5 # parameter for Adam optimizer
 
-    if not lmda:
+    if lmda is None: # wow, def remember to say 'is None' not just 'if lmda' if you want 0 to be valid...
         lmda = 0.5 # fishAE parameter
 
     device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
@@ -180,14 +179,19 @@ def train(lmda = None):
 
     # Checkpointage
 
-    checkpointStr = f"fishvae_v1_lmda{lmda}"
+    checkpointStr = f"fishvae_v1_lmda{lmda}_"
 
     checkpointDir = "/checkpoint/ttrim/fishae"
+    print(f"Looking for files starting {checkpointStr} in {checkpointDir}")
     checkpointFilenames = os.listdir(checkpointDir)
     releventFilenames = tuple(filename for filename 
             in checkpointFilenames if filename.startswith(checkpointStr))
 
     if releventFilenames:
+
+        print(f"Found the following:")
+        print(releventFilenames)
+
         lastCheckpointFilename = max(releventFilenames)
         print(f"Restarting training from checkpoint {lastCheckpointFilename}")
 
@@ -196,12 +200,13 @@ def train(lmda = None):
         lastepo = int(lastCheckpointFilename.split("epo")[-1].strip(".pt"))
         print(f"last epoch: {lastepo}")
     else:
+        print("... didn't find any")
         print(f"Beginning training for {checkpointStr}")
         lastepo = 0
 
 
     optimizer = Adam(model.parameters(), lr=lr)
-    num_epochs = 500
+    num_epochs = 501
 
     extra_checkpoints = (1,2,3,5,8,13)
 
@@ -229,17 +234,19 @@ def train(lmda = None):
 
         mean_loss = sum(train_losses) / len(train_losses) if (
             len(train_losses) > 0) else 0
-        print(f"train loss at epoch {epoch+1} is {mean_loss}")
+        print(f"train loss after epoch {epoch} is {mean_loss}")
         if ((epoch % 20) == 0
                 or epoch in extra_checkpoints):
-            torch.save(model.state_dict(), f"{checkpointDir}/{checkpointStr}_epo{epoch}.pt")
+            torch.save(model.state_dict(), f"{checkpointDir}/{checkpointStr}epo{epoch}.pt")
 
 
 if __name__ == "__main__":
 
-    if len(sys.argv==2):
-        lmda = sys.argv[1]
+    if len(sys.argv)==2:
+        print(f"Recieved {sys.argv[1]} as argument. Setting lambda.")
+        lmda = float(sys.argv[1])
     else:
+        raise Exception("Missing required argument lambda.")
         lmda = 0.5
 
     train(lmda)
