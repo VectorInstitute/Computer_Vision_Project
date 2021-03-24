@@ -22,22 +22,16 @@ MVTEC_ROOT_DIR = "/scratch/ssd002/datasets/MVTec_AD"
 def loss_fn(x, z, 
             lmdax, lmdaz, 
             x_recon_batch, z_recon_batch, 
-            mu, logvar):
+            ):
 
     B = x.size(0)
-  #  print(f"x size: {x.size()}\n",
-  #          f"z size: {z.size()}\n",
-  #          f"xr size: {x_recon_batch.size()}\n",
-  #          f"zr size: {z_recon_batch.size()}\n"
-  #          )
 
     MSEx = (x - x_recon_batch).pow(2).sum() / B
     MSEz = (z - z_recon_batch).pow(2).sum() / B
     Lx = lmdax * MSEx
     Lz = lmdaz * MSEz
 
-    KLD = (-0.5 * (1 + logvar - mu.pow(2) - logvar.exp()).sum(1)).mean()
-    return Lx + Lz + KLD
+    return Lx + Lz
 
 
 class Decoder(nn.Module):
@@ -108,7 +102,7 @@ class Encoder(nn.Module):
             nn.BatchNorm2d(ndf * 16),
             nn.LeakyReLU(0.2, inplace=True),
             # state size. (ndf*16) x 4 x 4
-            nn.Conv2d(ndf * 16, 2 * nz, 4, stride=1, padding=0, bias=False),
+            nn.Conv2d(ndf * 16, nz, 4, stride=1, padding=0, bias=False),
             nn.Flatten(),
         )
 
@@ -116,7 +110,7 @@ class Encoder(nn.Module):
         return self.main(x)
 
 
-class FishVAE(nn.Module):
+class FishAE(nn.Module):
 
     def __init__(self,lmda = 0.5):
         super().__init__()
@@ -128,21 +122,11 @@ class FishVAE(nn.Module):
         self.z_lambda = lmda
         self.x_lambda = 1 - lmda
 
-    def reparameterize(self, mu, logvar):
-        std = (0.5 * logvar).exp()
-        eps = torch.randn_like(std)
-        return mu + eps * std
-
     def forward(self, x):
-        enc_out = self.encoder(x)
-        mu, logvar = enc_out[..., :100], enc_out[..., 100:]
-        z = self.reparameterize(mu, logvar)
+        z = self.encoder(x)
         x_recon_batch = self.decoder(z.unsqueeze(-1).unsqueeze(-1))
         z_recon_batch = self.encoder(x_recon_batch)
-        # actually we just care about mu
-        # TODO: do we just?
-        z_recon_batch = z_recon_batch[..., :100]
-        return z, x_recon_batch, z_recon_batch, mu, logvar
+        return z, x_recon_batch, z_recon_batch
 
 
 def to_loader(dset, batch_size=128, num_workers=4):
@@ -174,14 +158,14 @@ def train(lmda = None):
                                        transforms=training_transforms)
 
     train_loader = to_loader(mvtec_train_dset)
-    model = FishVAE(lmda=lmda).to(device)
+    model = FishAE(lmda=lmda).to(device)
     model = torch.nn.DataParallel(model)
 
     # Checkpointage
 
-    checkpointStr = f"fishvae_v1_lmda{lmda}_"
+    checkpointStr = f"fishae_v1_lmda{lmda}_"
 
-    checkpointDir = "/checkpoint/ttrim/fishae"
+    checkpointDir = "/checkpoint/ttrim/fae"
     print(f"Looking for files starting {checkpointStr} in {checkpointDir}")
     checkpointFilenames = os.listdir(checkpointDir)
     releventFilenames = tuple(filename for filename 
@@ -216,11 +200,11 @@ def train(lmda = None):
         for i, (data, _) in enumerate(train_loader):
             x = data.to(device)
             optimizer.zero_grad()
-            z, x_recon_batch, z_recon_batch, mu, logvar = model(x)
+            z, x_recon_batch, z_recon_batch = model(x)
             loss = loss_fn(x, z,
                            model.module.x_lambda, model.module.z_lambda,
                            x_recon_batch, z_recon_batch,
-                           mu, logvar)
+                           )
             loss.backward()
             optimizer.step()
             train_losses.append(loss.item())

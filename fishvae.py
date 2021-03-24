@@ -181,7 +181,7 @@ def train(lmda = None):
 
     checkpointStr = f"fishvae_v1_lmda{lmda}_"
 
-    checkpointDir = "/checkpoint/ttrim/fishae"
+    checkpointDir = "/checkpoint/ttrim/fvae"
     print(f"Looking for files starting {checkpointStr} in {checkpointDir}")
     checkpointFilenames = os.listdir(checkpointDir)
     releventFilenames = tuple(filename for filename 
