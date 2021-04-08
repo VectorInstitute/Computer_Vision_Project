@@ -1,0 +1,3 @@
+[submodule "video2/SlowFast"]
+	path = video2/SlowFast
+	url = git@github.com:facebookresearch/SlowFast.git
