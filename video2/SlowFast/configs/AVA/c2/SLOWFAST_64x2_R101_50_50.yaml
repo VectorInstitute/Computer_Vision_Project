@@ -20,7 +20,7 @@ DETECTION:
 AVA:
   BGR: False
   DETECTION_SCORE_THRESH: 0.8
-  TEST_PREDICT_BOX_LISTS: ["person_box_67091280_iou90/ava_detection_val_boxes_and_labels.csv"]
+  # TEST_PREDICT_BOX_LISTS: ["person_box_67091280_iou90/ava_detection_val_boxes_and_labels.csv"]
 SLOWFAST:
   ALPHA: 4
   BETA_INV: 8
