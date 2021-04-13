@@ -16,6 +16,9 @@ from vector_cv_tools import datasets as vdatasets
 import sys
 import os
 
+import wandb
+from checker import Checker
+
 MVTEC_ROOT_DIR = "/scratch/ssd002/datasets/MVTec_AD"
 
 
@@ -156,12 +159,10 @@ def to_loader(dset, batch_size=128, num_workers=4):
                       shuffle=True)
 
 
-def train(lmda = None):
+def train(lmda, altern):
 
     lr = 3e-5 # parameter for Adam optimizer
 
-    if lmda is None: # wow, def remember to say 'is None' not just 'if lmda' if you want 0 to be valid...
-        lmda = 0.5 # fishAE parameter
 
     device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
@@ -179,13 +180,13 @@ def train(lmda = None):
 
     # Checkpointage
 
-    checkpointStr = f"fishvae_v1_lmda{lmda}_"
+    checkpointStr = f"fishVAE_v2_lmda{lmda}_altrn{altern}_"
 
     checkpointDir = "/checkpoint/ttrim/fvae"
     print(f"Looking for files starting {checkpointStr} in {checkpointDir}")
     checkpointFilenames = os.listdir(checkpointDir)
     releventFilenames = tuple(filename for filename 
-            in checkpointFilenames if filename.startswith(checkpointStr))
+            in checkpointFilenames if filename.startswith(checkpointStr+"epo"))
 
     if releventFilenames:
 
@@ -205,12 +206,55 @@ def train(lmda = None):
         lastepo = 0
 
 
+    if checkpointStr+"randomness_state" in checkpointFilenames:
+        training_state = torch.load(checkpointDir+"/"+checkpointStr+"randomness_state")
+        rng = training_state['rng']
+        torch.random.set_rng_state(rng)
+    else:
+        torch.random.manual_seed(42)
+
+
+    #############################
+    # get your hyperparameters! #
+    #############################
+
     optimizer = Adam(model.parameters(), lr=lr)
     num_epochs = 501
 
     extra_checkpoints = (1,2,3,5,8,13)
 
+
+    checker = Checker()
+
+    #################
+    ####  Wandb  ####
+    #################
+    
+    wandb.init(
+        entity='images',
+        project='Phase 1',
+        id=f"fVAE_{lmda}_{altern}",
+        resume="allow",
+        config={
+            "model": "FishVAE",
+            "lambda":lmda,
+            "altern":altern,
+            "epochs": num_epochs,
+            },
+        )
+
+    #################################
+    ####   Training Loop Ho!!!   ####
+    #################################
+
     for epoch in tqdm(range(lastepo+1,num_epochs)):
+
+        if altern and epoch % altern == altern-1:
+            if 0 == model.module.z_lambda:
+                model.module.set_lambda(lmda)
+            else:
+                model.module.set_lambda(0)
+
         print(f"starting epoch {epoch}")
         train_losses = []
         for i, (data, _) in enumerate(train_loader):
@@ -223,30 +267,44 @@ def train(lmda = None):
                            mu, logvar)
             loss.backward()
             optimizer.step()
+
             train_losses.append(loss.item())
 
-            # these aren't even good.
-            # maybe if they were more at start of training
-            # and less later on. but as it stands, I'll just look at the checkpoints.
-          #  if i % 100 == 0:
-          #      save_image(recon.detach().cpu(), f"{epoch+1}_{i}.png")
-          #      print(loss.item())
 
-        mean_loss = sum(train_losses) / len(train_losses) if (
+        trainloss = sum(train_losses) / len(train_losses) if (
             len(train_losses) > 0) else 0
-        print(f"train loss after epoch {epoch} is {mean_loss}")
+        xloss,zloss,auc = checker.xloss_zloss_auc( model )
+        wandb.log({
+            "epoch":epoch,
+            "train_loss":trainloss,
+            "xloss":xloss,
+            "zloss":zloss,
+            "auc":auc,
+            "current_lambda":model.module.z_lambda,
+            })
+
+
         if ((epoch % 20) == 0
                 or epoch in extra_checkpoints):
             torch.save(model.state_dict(), f"{checkpointDir}/{checkpointStr}epo{epoch}.pt")
+            torch.save(
+                {'rng' : torch.random.get_rng_state()},
+                checkpointDir+"/"+checkpointStr+"randomness_state")
+
 
 
 if __name__ == "__main__":
 
-    if len(sys.argv)==2:
+    if len(sys.argv)==3:
         print(f"Recieved {sys.argv[1]} as argument. Setting lambda.")
         lmda = float(sys.argv[1])
+        altern = float(sys.argv[2])
     else:
-        raise Exception("Missing required argument lambda.")
-        lmda = 0.5
+        raise Exception("""Missing required arguments lambda and alternation.
+loss = lambda * zloss + (1-lambda) * xloss
+altern is number of epochs to go between switching lambda between its given value and 0
+altern = 0 only uses given lambda
+""")
 
-    train(lmda)
+    train(lmda, altern)
+
