@@ -8,3 +8,11 @@ To install dependencies:
 ```bash
 pip install -r requirements.txt
 ```
+
+## Training
+
+To train the model(s), run:
+
+```train
+python train.py
+```
