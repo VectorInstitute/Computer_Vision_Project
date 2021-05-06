@@ -6,8 +6,8 @@ from tqdm import tqdm
 from torchvision import transforms
 from torch.utils.data import DataLoader
 
-from image.Phase2.dataset import SpaceNet_Dataset
-from image.Phase2.model import UNET
+from dataset import SpaceNet_Dataset
+from model import UNET
 
 BASE_DATA_PATH = "/scratch/ssd002/datasets/cv_project/spacenet"
 EXAMPLE_DATA_PATH = os.path.join(BASE_DATA_PATH, "AOI_4_Shanghai_Train_processed")
@@ -44,7 +44,7 @@ def main():
             transforms.ToTensor(),
             normalize
     ])
-    
+
     train_ds = SpaceNet_Dataset(img_dir=IMG_PATH, 
                                 mask_dir=MASK_PATH, 
                                 transform=data_transform)
