@@ -47,6 +47,9 @@ def perform_test(test_loader, model, test_meter, cfg, writer=None):
     test_meter.iter_tic()
 
     for cur_iter, (inputs, labels, video_idx, meta) in enumerate(test_loader):
+        # cache the cpu tensors
+        labels_cpu = labels
+        video_idx_cpu = video_idx
         if cfg.NUM_GPUS:
             # Transfer the data to the current GPU device.
             if isinstance(inputs, (list,)):
@@ -56,8 +59,8 @@ def perform_test(test_loader, model, test_meter, cfg, writer=None):
                 inputs = inputs.cuda(non_blocking=True)
 
             # Transfer the data to the current GPU device.
-            labels = labels.cuda()
-            video_idx = video_idx.cuda()
+            labels = labels.cuda(non_blocking=True)
+            video_idx = video_idx.cuda(non_blocking=True)
             for key, val in meta.items():
                 if isinstance(val, (list,)):
                     for i in range(len(val)):
@@ -72,12 +75,12 @@ def perform_test(test_loader, model, test_meter, cfg, writer=None):
             ori_boxes = meta["ori_boxes"]
             metadata = meta["metadata"]
 
-            preds = preds.detach().cpu() if cfg.NUM_GPUS else preds.detach()
+            preds = preds.detach()
             ori_boxes = (
-                ori_boxes.detach().cpu() if cfg.NUM_GPUS else ori_boxes.detach()
+                ori_boxes.detach()
             )
             metadata = (
-                metadata.detach().cpu() if cfg.NUM_GPUS else metadata.detach()
+                metadata.detach()
             )
 
             if cfg.NUM_GPUS > 1:
@@ -100,13 +103,11 @@ def perform_test(test_loader, model, test_meter, cfg, writer=None):
                 )
             if cfg.NUM_GPUS:
                 preds = preds.cpu()
-                labels = labels.cpu()
-                video_idx = video_idx.cpu()
 
             test_meter.iter_toc()
             # Update and log stats.
             test_meter.update_stats(
-                preds.detach(), labels.detach(), video_idx.detach()
+                preds.detach(), labels_cpu.detach(), video_idx_cpu.detach()
             )
             test_meter.log_iter_stats(cur_iter)
 

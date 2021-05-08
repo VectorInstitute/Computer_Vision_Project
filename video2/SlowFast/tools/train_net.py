@@ -23,6 +23,7 @@ from slowfast.utils.multigrid import MultigridSchedule
 
 logger = logging.get_logger(__name__)
 
+from vector_cv_tools import checkpointing as vckpt
 
 def train_epoch(
     train_loader, model, optimizer, train_meter, cur_epoch, cfg, writer=None
