@@ -16,3 +16,11 @@ To train the model(s), run:
 ```train
 python train.py
 ```
+
+## Training on cluster with slurm scheduler
+
+To train the model(s), run:
+
+```train
+sbatch run.sh
+```
