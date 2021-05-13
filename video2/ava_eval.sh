@@ -12,6 +12,9 @@
 #SBATCH -N 1
 #SBATCH --open-mode=append
 
+
+CKPT=${1:-"checkpoints/SLOWFAST_32x2_R101_50_50.pkl"}
+
 echo `date`: Job $SLURM_JOB_ID is allocated resource
 
 module load vector_cv_project
@@ -22,7 +25,7 @@ python setup.py build develop --prefix $HOME/.local/
 popd
 
 echo Running SlowFast ava example
-cmd="python SlowFast/tools/run_net.py  --cfg SlowFast/configs/AVA/c2/SLOWFAST_32x2_R101_50_50.yaml  TEST.CHECKPOINT_FILE_PATH checkpoints/SLOWFAST_32x2_R101_50_50.pkl TRAIN.ENABLE False  NUM_GPUS 8  DATA_LOADER.NUM_WORKERS 8 DATA_LOADER.PIN_MEMORY True  TEST.BATCH_SIZE 8"
+cmd="python SlowFast/tools/run_net.py  --cfg SlowFast/configs/AVA/c2/SLOWFAST_32x2_R101_50_50.yaml  TEST.CHECKPOINT_FILE_PATH $CKPT TRAIN.ENABLE False  NUM_GPUS 8  DATA_LOADER.NUM_WORKERS 8 DATA_LOADER.PIN_MEMORY True  TEST.BATCH_SIZE 8"
 
 if [ -z "$SLURM_JOB_ID" ]
 then
