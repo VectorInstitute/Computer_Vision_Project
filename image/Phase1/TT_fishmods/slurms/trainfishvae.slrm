@@ -1,0 +1,43 @@
+#!/bin/bash
+
+# The lines that start with #SBATCH are read by slurm to set up the job
+# any #SBATCH argument after the first non-empty/non-comment line will be ignored
+
+#SBATCH --job-name=TT_convvae
+# Change this for a different type of GPU
+#SBATCH --partition=rtx6000
+
+# Change this for a different quality of service (priority)
+#SBATCH --qos=normal
+
+# Change this for request different number of CPUs/GPU/Memory, they must fit on a single node
+#SBATCH --cpus-per-task=2
+#SBATCH --gres=gpu:4
+#SBATCH --mem=8G
+
+# stdout/err are directed to file, these two arguments speficify where they should go, %j is a formatter for the job id
+#SBATCH --output=./TT_convvae_%j.out
+#SBATCH --error=./TT_convvae_%j.err
+
+# Set the file mode to append, otherwise preemption resets the file and the previous output will be overwritten
+#SBATCH --open-mode=append
+
+
+if [ -z "$SLURM_JOB_ID" ]
+then
+    echo ------------- FAILED ----------------
+    echo \$SLURM_JOB_ID is empty, did you launch the script with "sbatch" ?
+    exit
+else
+    echo Job $SLRUM_JOB_ID is running
+fi
+
+
+module load vector_cv_project
+#hostname
+#which python
+#nvidia-smi
+
+#echo "This goes to stderr" 1>&2
+
+python convvae.py
