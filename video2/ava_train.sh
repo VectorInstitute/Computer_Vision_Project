@@ -22,7 +22,7 @@ python setup.py build develop --prefix $HOME/.local/
 popd
 
 echo Running SlowFast ava example
-cmd="python SlowFast/tools/run_net.py --cfg SlowFast/configs/AVA/SLOW_8x8_R50_SHORT.yaml NUM_GPUS 2 TRAIN.BATCH_SIZE 64 SOLVER.BASE_LR 0.0125 DATA_LOADER.ENABLE_MULTI_THREAD_DECODE True DATA_LOADER.NUM_WORKERS 4"
+cmd="python SlowFast/tools/run_net.py --cfg SlowFast/configs/AVA/SLOW_8x8_R50_SHORT.yaml NUM_GPUS 2 TRAIN.BATCH_SIZE 64 SOLVER.BASE_LR 0.0125 DATA_LOADER.ENABLE_MULTI_THREAD_DECODE True DATA_LOADER.NUM_WORKERS 4  TEST.ENABLE False"
 
 if [ -z "$SLURM_JOB_ID" ]
 then
