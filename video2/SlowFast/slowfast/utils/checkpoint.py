@@ -175,6 +175,17 @@ def inflate_weight(state_dict_2d, state_dict_3d):
     return state_dict_inflated
 
 
+def map_weights(mapping, weights):
+    new_weights = []
+    for k, v in mapping.items():
+        top_3_K_classes = [
+            (k, v) for k, v in sorted(v.items(), key=lambda item: item[1], reverse=True)
+        ][:3]
+        new_weights.append(torch.stack([weights[e[0]] for e in top_3_K_classes], dim=0).mean(0))
+    
+    return torch.stack(new_weights, dim=0)
+
+
 def load_checkpoint(
     path_to_checkpoint,
     model,
@@ -184,6 +195,7 @@ def load_checkpoint(
     convert_from_caffe2=False,
     epoch_reset=False,
     clear_name_pattern=(),
+    cfg=None,
 ):
     """
     Load the checkpoint from the given file. If inflation is True, inflate the
@@ -256,14 +268,19 @@ def load_checkpoint(
                         )
                     )
                 else:
-                    logger.warn(
-                        "!! {}: {} does not match {}: {}".format(
-                            key,
-                            c2_blob_shape,
-                            converted_key,
-                            tuple(model_blob_shape),
+                    if cfg.TRAIN.CHECKPOINT_TRANSFER.ENABLE and cfg.TEST.DATASET == 'ava':
+                        with open(cfg.TRAIN.CHECKPOINT_TRANSFER.PATH_MAPPING, 'rb') as fp:
+                            mapping = pickle.load(fp)
+                        state_dict[converted_key] = map_weights(mapping, torch.tensor(caffe2_checkpoint["blobs"][key]))
+                    else:
+                        logger.warn(
+                            "!! {}: {} does not match {}: {}".format(
+                                key,
+                                c2_blob_shape,
+                                converted_key,
+                                tuple(model_blob_shape),
+                            )
                         )
-                    )
             else:
                 if not any(
                     prefix in key for prefix in ["momentum", "lr", "model_iter"]
@@ -462,10 +479,11 @@ def load_test_checkpoint(cfg, model):
             None,
             inflation=False,
             convert_from_caffe2=cfg.TEST.CHECKPOINT_TYPE == "caffe2",
+            cfg=cfg,
         )
     elif has_checkpoint(cfg.OUTPUT_DIR):
         last_checkpoint = get_last_checkpoint(cfg.OUTPUT_DIR)
-        load_checkpoint(last_checkpoint, model, cfg.NUM_GPUS > 1)
+        load_checkpoint(last_checkpoint, model, cfg.NUM_GPUS > 1, cfg=cfg)
     elif cfg.TRAIN.CHECKPOINT_FILE_PATH != "":
         # If no checkpoint found in TEST.CHECKPOINT_FILE_PATH or in the current
         # checkpoint folder, try to load checkpoint from
@@ -477,6 +495,7 @@ def load_test_checkpoint(cfg, model):
             None,
             inflation=False,
             convert_from_caffe2=cfg.TRAIN.CHECKPOINT_TYPE == "caffe2",
+            cfg=cfg,
         )
     else:
         logger.info(
