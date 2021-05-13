@@ -176,13 +176,20 @@ def train(lmda, altern):
 
         print(f"Found the following:")
         print(releventFilenames)
+        
 
-        lastCheckpointFilename = max(releventFilenames)
+        fileEpochs = list( int(filename.split("epo")[-1].split(".")[0]) for filename in releventFilenames )
+        lastEpoch = max(fileEpochs)
+
+        #  TODO: hard coding things like this in random spots is bad.
+        # please find or write a better way of managing checkpoints.
+        lastCheckpointFilename = checkpointStr+"epo"+str(lastEpoch)+".pt"
+
         print(f"Restarting training from checkpoint {lastCheckpointFilename}")
 
         model.load_state_dict(torch.load(f"{checkpointDir}/{lastCheckpointFilename}"))
         # epoch is not 0!!!
-        lastepo = int(lastCheckpointFilename.split("epo")[-1].strip(".pt"))
+        lastepo = lastEpoch
         print(f"last epoch: {lastepo}")
     else:
         print("... didn't find any")
@@ -203,7 +210,7 @@ def train(lmda, altern):
     #############################
 
     optimizer = Adam(model.parameters(), lr=lr)
-    num_epochs = 501
+    num_epochs = 201
 
     extra_checkpoints = (1,2,3,5,8,13)
 
@@ -268,7 +275,7 @@ def train(lmda, altern):
             })
 
 
-        if ((epoch % 20) == 0
+        if ((epoch % 10) == 0
                 or epoch in extra_checkpoints):
             torch.save(model.state_dict(), f"{checkpointDir}/{checkpointStr}epo{epoch}.pt")
             torch.save(
