@@ -19,7 +19,7 @@ import os
 import wandb
 from checker import Checker
 
-MVTEC_ROOT_DIR = "/scratch/ssd002/datasets/MVTec_AD"
+from settings import MVTEC_ROOT_DIR
 
 
 def loss_fn(x, z, 
