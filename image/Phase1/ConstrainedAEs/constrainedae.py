@@ -113,7 +113,7 @@ class Encoder(nn.Module):
         return self.main(x)
 
 
-class FishAE(nn.Module):
+class ConstrainedAE(nn.Module):
 
     def __init__(self,lmda = 0.5):
         super().__init__()
@@ -159,7 +159,7 @@ def train(lmda, altern):
                                        transforms=training_transforms)
 
     train_loader = to_loader(mvtec_train_dset)
-    model = FishAE(lmda=lmda).to(device)
+    model = ConstrainedAE(lmda=lmda).to(device)
     model = torch.nn.DataParallel(model)
 
     # Checkpointage
