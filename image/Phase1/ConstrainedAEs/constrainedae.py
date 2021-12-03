@@ -19,7 +19,7 @@ import os
 import wandb
 from auc_checker import Checker
 
-from settings import MVTEC_ROOT_DIR
+from settings import MVTEC_ROOT_DIR, checkpointDir
 
 
 def loss_fn(x, z, 
@@ -166,7 +166,6 @@ def train(lmda, altern):
 
     checkpointStr = f"fishAE_v2_lmda{lmda}_altrn{altern}_"
 
-    checkpointDir = "/checkpoint/ttrim/fae"
     print(f"Looking for files starting {checkpointStr} in {checkpointDir}")
     checkpointFilenames = os.listdir(checkpointDir)
     releventFilenames = tuple(filename for filename 
@@ -285,10 +284,15 @@ def train(lmda, altern):
 
 if __name__ == "__main__":
 
-    if len(sys.argv)==3:
+    if len(sys.argv)==2:
         print(f"Recieved {sys.argv[1]} as argument. Setting lambda.")
         lmda = float(sys.argv[1])
+        altern = None
+    if len(sys.argv)==3:
+        print(f"Recieved {sys.argv[1]} as argument. Setting lambda. And altern to {sys.argv[2]}")
+        lmda = float(sys.argv[1])
         altern = float(sys.argv[2])
+    else:
     else:
         raise Exception("""Missing required arguments lambda and alternation.
 loss = lambda * zloss + (1-lambda) * xloss
