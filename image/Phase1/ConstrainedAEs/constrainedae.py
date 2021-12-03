@@ -293,7 +293,6 @@ if __name__ == "__main__":
         lmda = float(sys.argv[1])
         altern = float(sys.argv[2])
     else:
-    else:
         raise Exception("""Missing required arguments lambda and alternation.
 loss = lambda * zloss + (1-lambda) * xloss
 altern is number of epochs to go between switching lambda between its given value and 0
