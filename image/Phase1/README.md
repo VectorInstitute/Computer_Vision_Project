@@ -4,6 +4,7 @@ To train and evaluate AUC on Constrained autoencoders:
 
     cd ConstrainedAEs
     bash download_dataset.sh
+    pip install -r requirements.txt
 
 then to train an ordinary AE:
 
