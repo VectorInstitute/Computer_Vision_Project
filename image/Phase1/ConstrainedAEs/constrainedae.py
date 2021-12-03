@@ -17,7 +17,7 @@ import sys
 import os
 
 import wandb
-from checker import Checker
+from auc_checker import Checker
 
 from settings import MVTEC_ROOT_DIR
 

@@ -16,20 +16,34 @@ from vector_cv_tools.datasets.mvtec import MVTec_OBJECTS
 import torch 
 from sklearn.metrics import roc_auc_score#Get Error Maps 
 
-#Oh! That's right, I'm discarding the random deviation while vaeing. That might not be the normal thing to do...
-# Anyway, these functions are helpers that encode and decode.
-def imgs2vecs(model,img):
+def imgs2vecsVAE(model,img):
     with torch.no_grad():
         z = model.module.encoder(img)
     return z[..., :100] # we only like mu
+
+def imgs2vecsAE(model,img):
+    with torch.no_grad():
+        z = model.module.encoder(img)
+    return z
+
 def vecs2imgs(model,vec):
     with torch.no_grad():
         img = model.module.decoder(vec.unsqueeze(-1).unsqueeze(-1))
     return img
-def imgs2imgs(model,img):
+
+def imgs2imgsVAE(model,img):
     return vecs2imgs(
                 model,
-                imgs2vecs(
+                imgs2vecsVAE(
+                    model,
+                    img
+                )
+    )
+
+def imgs2imgsAE(model,img):
+    return vecs2imgs(
+                model,
+                imgs2vecsAE(
                     model,
                     img
                 )
@@ -55,7 +69,17 @@ def get_auc(sample_tensor, reconstructions, masks_tensor):
 
 
 class Checker():
-    def __init__(self):
+    def __init__(self, VAEorAE="VAE"):
+
+        if VAEorAE == "VAE":
+            self.imgs2vecs = imgs2vecsVAE
+            self.vecs2imgs = vecs2imgs
+        elif VAEorAE == "AE":
+            self.imgs2vecs = imgs2vecsAE
+            self.vecs2imgs = vecs2imgs
+        else:
+            raise Exception("Unknown value for VAEorAE, please state either VAE or AE.")
+
 
         dsets = list(vdatasets.MVTec(MVTEC_ROOT_DIR, split="test", transforms = basic_transform,
                                      obj_types=[obj_type]) for obj_type in MVTec_OBJECTS)
@@ -103,9 +127,9 @@ class Checker():
         model.eval()
 
         X = self.X
-        Z  = imgs2vecs(model, X)
-        Xr = vecs2imgs(model, Z)
-        Zr = imgs2vecs(model, Xr)
+        Z  = self.imgs2vecs(model, X)
+        Xr = self.vecs2imgs(model, Z)
+        Zr = self.imgs2vecs(model, Xr)
 
         B = X.size(0)
         MSEx = (X - Xr).pow(2).sum() / B
