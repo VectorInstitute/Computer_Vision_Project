@@ -1,4 +1,4 @@
-# Image group - Phase2 - Semantic Segmentation 
+# Image group - Phase2 - Semantic and instance segmentation in aerial and road obstacle imagery
 
 
 ## Requirements
