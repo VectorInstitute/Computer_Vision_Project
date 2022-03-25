@@ -19,7 +19,7 @@ Three broader topic related approaches were explored: anomaly and semantic segme
 2. Semantic and instance segmentation in aerial and road obstacle imagery
 
 **Video Approaches**
-4. Semantic segmentation in identifying clinically relevant features of interest in cholecystec-
+1. Semantic segmentation in identifying clinically relevant features of interest in cholecystec-
 tomy procedures (gallbladder surgery)
-4. Automated traffic incident detection With two-stream neural networks
-5. Transfer learning for efficient video classification and detection
+2. Automated traffic incident detection With two-stream neural networks
+3. Transfer learning for efficient video classification and detection
