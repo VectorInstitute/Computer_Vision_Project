@@ -7,3 +7,7 @@ A project with the Vector Institute is designed to facilitate knowledge transfer
 (1) learn about recent advances in computer vision with deep learning and vision modeling, and (2) reproduce large-scale pre-trained models.
 
 This repository is for ongoing research on training deep learning models at scale.
+
+In addition, the AI Engineering team has created a separate repository that works as a tool-kit the Computer Vision project at Vector Institute. It includes various datasets readily loadable from the shared cluster as well as useful image/video tools such as data augmentation and visualization utilities.
+
+You can find the repository at https://github.com/VectorInstitute/vector_cv_tools
