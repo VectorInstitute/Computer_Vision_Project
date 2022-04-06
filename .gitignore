@@ -1,3 +1,3 @@
 *.DS_Store
-
+Image_Segmentation/Defect_Detection/ckpt
 *__pycache__
