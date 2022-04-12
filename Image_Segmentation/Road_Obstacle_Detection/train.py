@@ -99,7 +99,7 @@ def main():
         train_loss_list.append(train_loss)
 
         model.eval()
-        val_loss =  val_step(model, criterion, val_dataloader, epoch, DEVICE)
+        val_loss =  val_step(model, criterion, val_dataloader, epoch, DEVICE, LF_MAP, args.sample_path)
         val_loss_list.append(val_loss)
 
 

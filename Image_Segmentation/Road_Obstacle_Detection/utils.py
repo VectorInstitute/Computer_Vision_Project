@@ -24,7 +24,7 @@ def train_step(model, opt, criterion, dataloader, epoch, device):
         
     return np.mean(losses)   
 
-def val_step(model, criterion, dataloader, epoch, device):
+def val_step(model, criterion, dataloader, epoch, device, lf_map, sample_path):
     losses = []
     dices = []
     viz = True
@@ -39,12 +39,12 @@ def val_step(model, criterion, dataloader, epoch, device):
         losses.append(loss.item())
 
         if viz:
-            save_viz(img, out, lbl, LF_MAP, epoch) 
+            save_viz(img, out, lbl, lf_map, epoch, sample_path) 
             viz = False 
          
     return np.mean(losses)
 
-def save_viz(img, out, lbl, color_map, epoch):
+def save_viz(img, out, lbl, color_map, epoch, sample_path):
     img = img.cpu().numpy()
     out = out.cpu().numpy()
     lbl = lbl.cpu().numpy()
@@ -61,9 +61,9 @@ def save_viz(img, out, lbl, color_map, epoch):
                 mask[j, i] = color_map[np.argmax(o[:, j, i]-1, axis=0)]
                 mask_gt[j, i] = color_map[l[j, i]]
                 
-        mask_path = f"{SAMPLE_PATH}/epoch_{str(epoch)}_pred_{str(index)}.jpg"
-        lbl_path = f"{SAMPLE_PATH}/epoch_{str(epoch)}_lbl_{str(index)}.jpg"
-        img_path = f"{SAMPLE_PATH}/epoch_{str(epoch)}_img_{str(index)}.jpg"
+        mask_path = f"{sample_path}/epoch_{str(epoch)}_pred_{str(index)}.jpg"
+        lbl_path = f"{sample_path}/epoch_{str(epoch)}_lbl_{str(index)}.jpg"
+        img_path = f"{sample_path}/epoch_{str(epoch)}_img_{str(index)}.jpg"
         f, axarr = plt.subplots(1, 3, figsize=(20, 20))
         im = np.moveaxis(im, 0, -1)
         axarr[0].imshow(im)
@@ -72,7 +72,7 @@ def save_viz(img, out, lbl, color_map, epoch):
         axarr[1].title.set_text('Label')
         axarr[2].imshow(mask)
         axarr[2].title.set_text('Prediction')
-        f.savefig( f"{SAMPLE_PATH}/epoch_{str(epoch)}_{str(index)}.jpg")
+        f.savefig( f"{sample_path}/epoch_{str(epoch)}_{str(index)}.jpg")
 
 def get_model(pretrained=False):
     # Prepare Model and Save to Checkpoint Directory
