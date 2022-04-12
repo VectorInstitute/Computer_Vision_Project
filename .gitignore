@@ -1,3 +1,8 @@
 *.DS_Store
 Image_Segmentation/Defect_Detection/ckpt
 *__pycache__
+Image_Segmentation/Defect_Detection/samples
+Image_Segmentation/Building_Footprint_Extraction/samples
+Image_Segmentation/Building_Footprint_Extraction/ckpt
+Image_Segmentation/Road_Obstacle_Detection/ckpt
+Image_Segmentation/Road_Obstacle_Detection/samples
