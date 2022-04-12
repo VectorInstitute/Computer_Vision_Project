@@ -24,11 +24,11 @@ def train_step(model, opt, criterion, dataloader, epoch, device):
         
     return np.mean(losses)   
 
-def val_step(model, opt, criterion, dataloader, epoch, device):
+def val_step(model, criterion, dataloader, epoch, device):
     losses = []
     dices = []
     viz = True
-    for (img, lbl) in tqdm(dataloader):
+    for i, (img, lbl) in enumerate(dataloader):
         lbl = lbl.long()
         img, lbl = img.to(device), lbl.to(device)
         

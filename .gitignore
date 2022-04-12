@@ -6,3 +6,5 @@ Image_Segmentation/Building_Footprint_Extraction/samples
 Image_Segmentation/Building_Footprint_Extraction/ckpt
 Image_Segmentation/Road_Obstacle_Detection/ckpt
 Image_Segmentation/Road_Obstacle_Detection/samples
+*.ipynb_checkpoints
+Image_Segmentation/Road_Obstacle_Detection/test.ipynb

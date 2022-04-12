@@ -31,9 +31,8 @@ parser = argparse.ArgumentParser(description="Feature Memory for Anomaly Detecti
 parser.add_argument('--epochs', type=int,  default=2, help=' The number of epochs to train the memory.')
 parser.add_argument('--batch_size', type=int,  default=4, help=' The batch size for training, validation and testing.')
 parser.add_argument('--learning_rate', type=float,  default=3e-4, help='Learning rates of model.')
-parser.add_argument('--size', type=int,  default=128, help='Side length of input image')
 parser.add_argument('--height', type=int,  default=128, help='Height of input image')
-parser.add_argument('--width', type=int,  default=128, help='Width of input image')
+parser.add_argument('--width', type=int,  default=256, help='Width of input image')
 parser.add_argument('--train_perc', type=float,  default=.9, help='Proportion of samples to use in training set')
 parser.add_argument('--data_path', type=str,  default="/scratch/ssd002/datasets/lostandfound", help='The root directory of the dataset.')
 parser.add_argument('--ckpt_path', type=str,  default="ckpt/run_1.pth", help='The file to save model checkpoints.')
@@ -100,7 +99,7 @@ def main():
         train_loss_list.append(train_loss)
 
         model.eval()
-        val_loss =  eval_net(model, val_dataloader, DEVICE)
+        val_loss =  val_step(model, criterion, val_dataloader, epoch, DEVICE)
         val_loss_list.append(val_loss)
 
 
