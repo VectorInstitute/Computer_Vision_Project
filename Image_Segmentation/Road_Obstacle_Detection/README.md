@@ -18,8 +18,7 @@ The Lost and Found dataset was introduced to evaluate the performance of small r
 ## Results
 
 <p align="center">
-<img width="750" alt="Validation Cross Entropy" src="https://user-images.githubusercontent.com/34798787/163045762-eee689fe-3115-4a49-8453-3e6ef5ab7deb.png
-">  
+<img width="750" alt="Validation Cross Entropy" src="https://user-images.githubusercontent.com/34798787/163045762-eee689fe-3115-4a49-8453-3e6ef5ab7deb.png">  
     <br>
 <div align="center"> 
    <b> Figure 2:</b> The validation cross entropy loss for each model across epochs.
