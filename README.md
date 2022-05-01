@@ -7,12 +7,12 @@ This project involved facilitating knowledge transfer between Vector and its ind
 
 Several use cases involving both images and videos are explored. These use-cases reflected current industry needs, participants’ interests and expertise, and opportunities to translate academic advances into real-world applications: 
 
-**Image Approaches**
+**Image Use Cases**
 1. Unsupervised defect detection in manufacturing using autoencoders
 2. Building footprint extraction using semantic segmentation
 3. Road Obstactle Detection using semantic segmentation
 
-**Video Approaches**
+**Video Use Cases**
 1. Semantic segmentation of videos from cholecystectomy procedures (gallbladder surgery)
 2. Traffic incident detection of videos using augment
 
