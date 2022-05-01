@@ -1,0 +1,36 @@
+# Dataset
+root: '/scratch/ssd002/datasets/cv_project/Detection-of-Traffic-Anomaly/dataset'
+data_root: "/scratch/ssd002/datasets/cv_project/Detection-of-Traffic-Anomaly/dataset/DoTA_fol_train_data"
+val_data_root: "/scratch/ssd002/datasets/cv_project/Detection-of-Traffic-Anomaly/dataset/DoTA_fol_val_data"# DoTA_fol_val_data
+label_file: '/scratch/ssd002/datasets/cv_project/Detection-of-Traffic-Anomaly/dataset/metadata_val.json'
+train_split: '/scratch/ssd002/datasets/cv_project/Detection-of-Traffic-Anomaly/dataset/train_split.txt'
+val_split: '/scratch/ssd002/datasets/cv_project/Detection-of-Traffic-Anomaly/dataset/val_split.txt'
+
+track_dir: "./sort_output/" 
+flow_dir: "./flownet2/" 
+ego_motion_dir: ""
+img_dir: "/scratch/ssd002/dataset_factory/cv_project/Detection-of-Traffic-Anomaly/dataset/frames"
+
+# dataset arguments
+seed_max: 5
+segment_len: 10 #16
+
+device: 'cuda'
+# fol model parameters
+pred_timesteps: 5
+with_ego: False 
+pred_dim: 4
+
+# dataloader parameters
+shuffle: True
+num_workers: 32
+GPU: 0
+batch_size: 16
+
+# image parameters
+H: 720
+W: 1280
+channels: 3
+
+flow_roi_size: [5,5,2]
+max_age: 10

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="WebServers">
+    <option name="servers">
+      <webServer id="a48b7051-6f3b-46ed-9247-be0e606b5eeb" name="vector_dota">
+        <fileTransfer rootFolder="/h/mkowal/cv_project/Computer_Vision_Project/yowo" accessType="SFTP" sshConfigId="91e29147-9835-43a0-be67-7a74a3e01eb2" sshConfig="mkowal@vector:22:6968 password">
+          <advancedOptions>
+            <advancedOptions dataProtectionLevel="Private" passiveMode="true" shareSSLContext="true" />
+          </advancedOptions>
+        </fileTransfer>
+      </webServer>
+    </option>
+  </component>
+</project>
