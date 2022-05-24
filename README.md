@@ -23,4 +23,4 @@ In addition, the AI Engineering team has created a separate repository that work
 Each folder corresponding to a use case includes instructions to run the experiments. It should be noted that this repository is no longer maintained and solely serves as an artifact of the project. 
 
 ## Acknowledgements 
-The authors would like to thank Vector Institute for making this collaboration possible and providing academic support and computing infrastructure during all phases of this work.
+Many thanks to our sponsor companies, researchers and Vector Institute staff for making this collaboration possible and providing academic support and computing infrastructure during all phases of this work.
