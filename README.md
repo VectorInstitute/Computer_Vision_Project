@@ -23,4 +23,19 @@ In addition, the AI Engineering team has created a separate repository that work
 Each folder corresponding to a use case includes instructions to run the experiments. It should be noted that this repository is no longer maintained and solely serves as an artifact of the project. 
 
 ## Acknowledgements 
-Many thanks to our sponsor companies, researchers and Vector Institute staff for making this collaboration possible and providing academic support and computing infrastructure during all phases of this work.
+Many thanks to our sponsor companies, researchers and Vector Institute staff for making this collaboration possible and providing academic support and computing infrastructure during all phases of this work. We would specifically like to thank the following individuals for their contributions. 
+
+* Elham Ahmadi
+* Andrew Alberts-Scherer
+* Raghav Goyal
+* John Jewell
+* Shuja Khalid
+* Matthew Kowal
+* Andriy Levitskyy
+* Jinbiao Ning
+* Tristan Trim
+* Kuldeep Panjwani
+* Saeed Pouryazdian
+* Sim Sachar
+* Yilei Wu
+* An Zhou
