@@ -1,6 +1,6 @@
 # Gallbladder Segmentation
 
-To work with this project, it is a prerequisite to install detectron2 and it's dependencies. The instrustions for this is in the website https://github.com/facebookresearch/detectron2
+To work with this project, it is a prerequisite to install detectron2 and it's dependencies. The instructions for this is in the website https://github.com/facebookresearch/detectron2
 
 ## Training for classes for personal project in detectron2:
 
