@@ -22,6 +22,9 @@ In addition, the AI Engineering team has created a separate repository that work
 ## Usage 
 Each folder corresponding to a use case includes instructions to run the experiments. It should be noted that this repository is no longer maintained and solely serves as an artifact of the project. 
 
+## Citations
+Please ensure you cite the Computer Vision report whenever you are citing this GitHub repository
+
 ## Acknowledgements 
 Many thanks to our sponsor companies, researchers and Vector Institute staff for making this collaboration possible and providing academic support and computing infrastructure during all phases of this work. We would specifically like to thank the following individuals for their contributions. 
 
