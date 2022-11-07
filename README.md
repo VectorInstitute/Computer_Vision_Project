@@ -23,7 +23,7 @@ In addition, the AI Engineering team has created a separate repository that work
 Each folder corresponding to a use case includes instructions to run the experiments. It should be noted that this repository is no longer maintained and solely serves as an artifact of the project. 
 
 ## Citations
-Please ensure you cite [The Computer Vision Technical Report] (https://vectorinstitute.ai/wp-content/uploads/2022/05/computer_vision_project_report_may252022.pdf) whenever you are citing this GitHub repository
+Please ensure you cite [Computer Vision: Applications in Manufacturing, Surgery, Traffic, Satellites, and Unlabelled Data Recognition Technical Report] (https://vectorinstitute.ai/wp-content/uploads/2022/05/computer_vision_project_report_may252022.pdf) whenever you are citing this GitHub repository
 
 ## Acknowledgements 
 Many thanks to our sponsor companies, researchers and Vector Institute staff for making this collaboration possible and providing academic support and computing infrastructure during all phases of this work. We would specifically like to thank the following individuals for their contributions. 
