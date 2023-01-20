@@ -4,7 +4,7 @@ In this project, we use ***YOWO*** (***Y**ou **O**nly **W**atch **O**nce*), a un
 
 The repository contains PyTorch code for accident detection on the DoTA dataset and spatiotemporal action localization AVA, UCF101-24 and JHMDB datasets!
 
-Please see the [Computer Vision Project Report - coming soon!]() for more details on the project and method.
+Please see the [Computer Vision Project Report - (https://vectorinstitute.ai/wp-content/uploads/2022/05/computer_vision_project_report_may252022.pdf]() for more details on the project and method.
 
 ## Installation
 
