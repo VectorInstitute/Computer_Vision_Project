@@ -22,7 +22,7 @@ parser = argparse.ArgumentParser(description="Feature Memory for Anomaly Detecti
 
 # basic config
 parser.add_argument('--model', type=str, help='Architecture variation for experiments. ae or vae.')
-parser.add_argument('--epochs', type=int,  default=100, help=' The number of epochs to train the memory.')
+parser.add_argument('--epochs', type=int,  default=100, help=' The number of epochs to train the model.')
 parser.add_argument('--batch_size', type=int,  default=8, help=' The batch size for training, validation and testing.')
 parser.add_argument('--learning_rate', type=float,  default=.001, help='Learning rates of model.')
 parser.add_argument('--size', type=int,  default=128, help='Side length of input image')

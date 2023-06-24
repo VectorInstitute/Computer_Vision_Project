@@ -59,15 +59,15 @@ pip install -r requirements.txt
 
 To obtain results for a specific architecture simply pass the appropriate arguments to the **train.py** script: 
 ```
-python train.py --model fcn50 --epochs 10 --batch_size 4
+python train.py --model fcn50 --epochs 10 --batch_size 4 --data_path /path/to/spacenet
 ```
 
 The **train.py** script has the following arguments: 
-- **model**:        (str): Architecture variation for experiments.
-- **epochs**        (int): The number of epochs to train the memory.
-- **batch_size**    (int) The batch size for training, validation and testing.
-- **learning_rate** (float): Learning rates of memory units.
-- **size**          (int): Side length of input image. 
-- **train_perc**   (float): The proportion of samples used for train.
-- **val_perc**    (float): The proportion of samples used for validation.
-- **data_path**    (str): The root directory of the dataset.
+- **model**:        (str): Architecture variation for experiments. *required*
+- **data_path**    (str): The root directory of the dataset. *required*
+- **epochs**        (int): The number of epochs to train the model. Default 25
+- **batch_size**    (int) The batch size for training, validation and testing. Default 8
+- **learning_rate** (float): Learning rates of model. Default .0001
+- **size**          (int): Side length of input image. Default 384 
+- **train_perc**   (float): The proportion of samples used for train. Default .8
+- **val_perc**    (float): The proportion of samples used for validation. Default .1
