@@ -21,20 +21,20 @@ from utils import train_step, test_step, save_checkpoint
 parser = argparse.ArgumentParser(description="Feature Memory for Anomaly Detection")
 
 # basic config
-parser.add_argument('--model', type=str, help='Architecture variation for experiments')
-parser.add_argument('--epochs', type=int,  default=2, help=' The number of epochs to train the memory.')
+parser.add_argument('--model', type=str, help='Architecture variation for experiments. ae or vae.')
+parser.add_argument('--epochs', type=int,  default=100, help=' The number of epochs to train the memory.')
 parser.add_argument('--batch_size', type=int,  default=8, help=' The batch size for training, validation and testing.')
-parser.add_argument('--learning_rate', type=float,  default=3e-4, help='Learning rates of model.')
+parser.add_argument('--learning_rate', type=float,  default=.001, help='Learning rates of model.')
 parser.add_argument('--size', type=int,  default=128, help='Side length of input image')
-parser.add_argument('--data_path', type=str,  default="/scratch/ssd002/home/jewtay/MAD/data/mvtec_data", help='The root directory of the dataset.')
-parser.add_argument('--ckpt_path', type=str,  default="ckpt", help='The directory to save model checkpoints.')
+parser.add_argument('--data_path', type=str, help='The root directory of the dataset.')
+parser.add_argument('--ckpt_path', type=str, help='The directory to save model checkpoints.')
 
 args = parser.parse_args()
 
 # Data Paths
-MVTEC_BASE_DIR = "/scratch/ssd002/home/jewtay/MAD/data/mvtec_data"
 
-CLASSES =  ["pill",
+CLASSES =  ["toothbrush",
+            "pill",
            "leather", 
            "hazelnut", 
            "capsule", 
@@ -46,11 +46,8 @@ CLASSES =  ["pill",
            "wood", 
            "metal_nut", 
            "screw", 
-           "carpet", 
-           "toothbrush", 
+           "carpet",  
            "grid"]
-
-CHECKPOINT_DIR = "ckpt"
 
 DEVICE = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
@@ -68,7 +65,7 @@ def main():
         print("class", inlier)
         current_epoch = 0
         ckpt_path = f"{args.ckpt_path}/{inlier}.pth"
-        img_dir = f"{MVTEC_BASE_DIR}/{inlier}"
+        img_dir = f"{args.data_path}/{inlier}"
         train_dataset = MVTecADDataset(img_dir, "train", transform)
         test_dataset = MVTecADDataset(img_dir, "test", transform, args.size)
 
@@ -103,7 +100,7 @@ def main():
             model.eval()
             test_auc, test_loss = test_step(test_loader, model, loss_fn, DEVICE, args.model)
             
-            print(f"Train Loss: {str(train_loss)} \t Test Loss: {str(train_loss)} \t Test AUC: {str(test_auc)}")
+            print(f"Train Loss: {str(train_loss)} \t Test AUC: {str(test_auc)}")
             
             if test_auc > highest_auc: 
                 highest_auc = test_auc

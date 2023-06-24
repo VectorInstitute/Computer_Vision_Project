@@ -53,10 +53,10 @@ python train.py --model vae --epochs 10 --batch_size 4
 ```
 
 The **train.py** script has the following arguments: 
-- **model**:        (str): Architecture variation for experiments.
-- **epochs**        (int): The number of epochs to train the memory.
-- **batch_size**    (int) The batch size for training, validation and testing.
-- **learning_rate** (float): Learning rates of memory units.
-- **size**          (int): Side length of input image. 
-- **data_path**    (str): The root directory of the dataset.
-- **ckpt_path**    (str): The directory to save model checkpoints.
+- **model**:        (str): Architecture variation for experiments. ae or vae. Default vae
+- **epochs**        (int): The number of epochs to train the model. Default 100
+- **batch_size**    (int) The batch size for trainingtesting. Default 32
+- **learning_rate** (float): Learning rates of model. Default .001
+- **size**          (int): Side length of input image Default 128
+- **data_path**    (str): The root directory of the dataset. *required*
+- **ckpt_path**    (str): The directory to save model checkpoints. *required*

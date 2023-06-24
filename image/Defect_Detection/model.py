@@ -84,22 +84,19 @@ class Encoder(nn.Module):
     def forward(self, x):
         return self.main(x)
 
-
 def vae_loss_fn(x, recon_batch, mu, logvar):
-    """Function taken and modified from
-        https://github.com/pytorch/examples/tree/master/vae
-    """
-    B = x.size(0)
-    MSE = (x - recon_batch).pow(2).sum() / B
-    KLD = (-0.5 * (1 + logvar - mu.pow(2) - logvar.exp()).sum(1)).mean()
-    return MSE + KLD
+    
+    recon_loss = ae_loss_fn(x, recon_batch)
+            
+    KLD = torch.mean(-0.5 * torch.sum(1 + logvar - mu.pow(2) - logvar.exp(),dim=1),dim=0)
+
+    return recon_loss + KLD
 
 def ae_loss_fn(x, recon_batch):
     """Function taken and modified from
         https://github.com/pytorch/examples/tree/master/vae
     """
-    B = x.size(0)
-    MSE = (x - recon_batch).pow(2).sum() / B
+    MSE = ((x - recon_batch) ** 2).mean()
     return MSE
 
 class ConvVAE(nn.Module):

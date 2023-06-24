@@ -17,11 +17,14 @@ class MVTecADDataset(Dataset):
         else:
 
             paths = glob.glob(f"{self.img_dir}/test/*/*.png")
+            
             inlier_img_paths = glob.glob(f"{self.img_dir}/test/good/*.png")
             outlier_img_paths = list(set(paths) - set(inlier_img_paths))
             self.img_paths = inlier_img_paths + outlier_img_paths
             self.outlier_lbl_paths = [f"{self.img_dir}/ground_truth/{path.split('/')[-2]}/{path.split('/')[-1][:-4]}_mask.png" for path in outlier_img_paths]
+            
             self.outlier_lbl = np.array([np.array(Image.open(path).convert('1').resize((self.size, self.size))) for path in self.outlier_lbl_paths])
+            
         
             self.inlier_lbl = np.zeros(shape=(len(inlier_img_paths), self.outlier_lbl.shape[1], self.outlier_lbl.shape[2]))
             
