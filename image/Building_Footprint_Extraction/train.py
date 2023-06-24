@@ -20,17 +20,17 @@ from utils import save_viz,  save_checkpoint, get_model
 
 from training import get_label_dist, train_fn, val_fn, test_fn
 
-parser = argparse.ArgumentParser(description="Feature Memory for Anomaly Detection")
+parser = argparse.ArgumentParser(description="Semantic Segmentation Experiments on Spacenet")
 
 # basic config
 parser.add_argument('--model', type=str, help='Architecture variation for experiments')
-parser.add_argument('--epochs', type=int,  default=25, help=' The number of epochs to train the memory.')
+parser.add_argument('--epochs', type=int,  default=25, help=' The number of epochs to train the model.')
 parser.add_argument('--batch_size', type=int,  default=8, help=' The batch size for training, validation and testing.')
-parser.add_argument('--learning_rate', type=float,  default=2e-4, help='Learning rates of memory units.')
+parser.add_argument('--learning_rate', type=float,  default=.0001, help='Learning rate of the model.')
 parser.add_argument('--size', type=int,  default=384, help='Side length of input image')
 parser.add_argument('--train_perc', type=float,  default=.8, help='The proportion of train samples used for validation.')
 parser.add_argument('--val_perc', type=float,  default=.1, help='The proportion of train samples used for validation.')
-parser.add_argument('--data_path', type=str,  default="/scratch/ssd002/datasets/cv_project/spacenet", help='The root directory of the dataset.')
+parser.add_argument('--data_path', type=str, help='The root directory of the spacenet dataset.')
 
 args = parser.parse_args()
 
